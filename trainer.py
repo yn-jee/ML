@@ -41,6 +41,8 @@ class Trainer:
               + '_' + str(datetime.datetime.now().hour).zfill(2) + str(datetime.datetime.now().minute).zfill(2)
 
         self.w_file = open("./outputs/output_" + self.now + ".txt", "w")
+        self.w_file.write("learning rate: " + str(optimizer_param['lr']))
+
 
     def train_step(self):
         batch_mask = np.random.choice(self.train_size, self.batch_size)
@@ -68,7 +70,9 @@ class Trainer:
             self.train_acc_list.append(train_acc)
             self.val_acc_list.append(val_acc)
 
-            if self.verbose: self.w_file.write("=== epoch:" + str(self.current_epoch) + ", validation acc:" + str(val_acc) + ", traning loss:" + str(loss) + " ===\n")
+            if self.verbose:
+                print("=== epoch:" + str(self.current_epoch) + ", validation acc:" + str(val_acc) + ", traning loss:" + str(loss) + " ===")
+                self.w_file.write("=== epoch:" + str(self.current_epoch) + ", validation acc:" + str(val_acc) + ", traning loss:" + str(loss) + " ===\n")
         self.current_iter += 1
 
     def train(self):
@@ -83,6 +87,8 @@ class Trainer:
         if self.verbose:
             self.w_file.write("=============== Final Test Accuracy & Loss ===============\n")
             self.w_file.write("test acc:" + str(test_acc) + ", test loss:" + str(test_loss) + '\n')
+            print("=============== Final Test Accuracy & Loss ===============")
+            print("test acc:" + str(test_acc) + ", test loss:" + str(test_loss))
 
             x = np.arange(1, self.epochs + 1)
 
