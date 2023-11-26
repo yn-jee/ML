@@ -6,7 +6,7 @@ from trainer import Trainer
 from PIL import Image
 
 # 데이터 읽기
-img_pixel = 16
+img_pixel = 128
 
 (x_train, t_train), (x_test, t_test), (x_val, t_val) = load_data(img_pixel)
 
