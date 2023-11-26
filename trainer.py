@@ -41,7 +41,7 @@ class Trainer:
               + '_' + str(datetime.datetime.now().hour).zfill(2) + str(datetime.datetime.now().minute).zfill(2)
 
         self.w_file = open("./outputs/output_" + self.now + ".txt", "w")
-        self.w_file.write("learning rate: " + str(optimizer_param['lr']))
+        self.w_file.write("learning rate: " + str(optimizer_param['lr']) + '\n')
 
 
     def train_step(self):
