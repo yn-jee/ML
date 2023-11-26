@@ -24,7 +24,7 @@ def show_first_image():
 max_epochs = 20
 
 
-for _ in range(3):
+while True:
     network = ConvNet(input_dim=(1, img_pixel, img_pixel),
                       conv_param={'filter_num': 30, 'filter_size': 5, 'pad': 0, 'stride': 1},
                       hidden_size=100, output_size=4, weight_init_std=0.01)
