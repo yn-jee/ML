@@ -27,6 +27,7 @@ class Trainer:
         self.optimizer = optimizer_class_dict[optimizer.lower()](**optimizer_param)
         
         self.train_size = x_train.shape[0]
+        self.val_size = x_val.shape[0]
         self.iter_per_epoch = int(max(self.train_size / mini_batch_size, 1))
         self.max_iter = int(epochs * self.iter_per_epoch)
         self.current_iter = 0
@@ -35,25 +36,33 @@ class Trainer:
         self.train_loss_list = []
         self.train_acc_list = []
         self.val_acc_list = []
+        self.val_loss_list = []
 
         # set time
         self.now = str(datetime.datetime.now().month) + str(datetime.datetime.now().day) \
               + '_' + str(datetime.datetime.now().hour).zfill(2) + str(datetime.datetime.now().minute).zfill(2)
 
         self.w_file = open("./outputs/output_" + self.now + ".txt", "w")
-        self.w_file.write("learning rate: " + str(optimizer_param['lr']) + '\n')
+        #self.w_file.write("learning rate: " + str(optimizer_param['lr']) + '\n')
 
 
     def train_step(self):
-        batch_mask = np.random.choice(self.train_size, self.batch_size)
-        x_batch = self.x_train[batch_mask]
-        t_batch = self.t_train[batch_mask]
+        batch_mask_train = np.random.choice(self.train_size, self.batch_size)
+        x_batch_train = self.x_train[batch_mask_train]
+        t_batch_train = self.t_train[batch_mask_train]
+
+
+        batch_mask_val = np.random.choice(self.val_size, self.batch_size)
+        x_batch_val = self.x_val[batch_mask_val]
+        t_batch_val = self.t_val[batch_mask_val]
         
-        grads = self.network.gradient(x_batch, t_batch)
+        grads = self.network.gradient(x_batch_train, t_batch_train)
         self.optimizer.update(self.network.params, grads)
         
-        loss = self.network.loss(x_batch, t_batch)
-        self.train_loss_list.append(loss)
+        train_loss = self.network.loss(x_batch_train, t_batch_train)
+        self.train_loss_list.append(train_loss)
+        val_loss = self.network.loss(x_batch_val, t_batch_val)
+        self.val_loss_list.append(val_loss)
         
         if self.current_iter % self.iter_per_epoch == 0:
             self.current_epoch += 1
@@ -71,8 +80,8 @@ class Trainer:
             self.val_acc_list.append(val_acc)
 
             if self.verbose:
-                print("=== epoch:" + str(self.current_epoch) + ", validation acc:" + str(val_acc) + ", traning loss:" + str(loss) + " ===")
-                self.w_file.write("=== epoch:" + str(self.current_epoch) + ", validation acc:" + str(val_acc) + ", traning loss:" + str(loss) + " ===\n")
+                print("=== epoch:" + str(self.current_epoch) + ", validation acc:" + str(val_acc) + ", traning loss:" + str(train_loss) + " ===")
+                self.w_file.write("=== epoch:" + str(self.current_epoch) + ", validation acc:" + str(val_acc) + ", traning loss:" + str(train_loss) + " ===\n")
         self.current_iter += 1
 
     def train(self):
@@ -96,7 +105,7 @@ class Trainer:
             y2 = self.val_acc_list
 
             y3 = [self.train_loss_list[i] for i in range(len(self.train_loss_list) // self.iter_per_epoch)]
-            y4 = [self.val_acc_list[i] for i in range(len(self.train_loss_list) // self.iter_per_epoch)]
+            y4 = [self.val_loss_list[i] for i in range(len(self.val_loss_list) // self.iter_per_epoch)]
 
             # Plot for Accuracy
             plt.figure(figsize=(12, 5))  # Set the figure size

@@ -21,20 +21,19 @@ def show_first_image():
 
 # show_first_image()
 
-max_epochs = 20
+max_epochs = 50
 
 count_for_lr = 0
 while True:
     if count_for_lr < 12:
         if count_for_lr % 3 == 0:
-            lr = 0.05
+            lr = 0.02
         elif count_for_lr % 3 == 1:
-            lr = 0.001
+            lr = 0.005
         else:
             lr = 0.01
     else:
         lr = 0.01
-
     network = ConvNet(input_dim=(1, img_pixel, img_pixel),
                       conv_param={'filter_num': 30, 'filter_size': 5, 'pad': 0, 'stride': 1},
                       hidden_size=100, output_size=4, weight_init_std=0.01)
